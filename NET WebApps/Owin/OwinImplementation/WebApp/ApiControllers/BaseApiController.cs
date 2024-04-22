@@ -1,9 +1,12 @@
-﻿using System.Web.Http;
+﻿using Microsoft.Ajax.Utilities;
+using System.Web.Http;
 
 namespace WebApp.ApiControllers
 {
-    [RoutePrefix("api")]
+
     public abstract class BaseApiController : ApiController
     {
+        public const string baseApiRoute = "api";
+        public const string adminGroupRoute = baseApiRoute + "/admin";
     }
 }

@@ -1,0 +1,9 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<h2>Dashboard</h2>
+<p>Is Authenticated? : @User.Identity.IsAuthenticated</p>
+<p>User Name : @(User.Identity.IsAuthenticated ? User.Identity.Name: "Not Authenticated")</p>
+

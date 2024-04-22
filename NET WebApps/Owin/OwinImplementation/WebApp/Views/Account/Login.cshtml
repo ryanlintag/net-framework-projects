@@ -1,0 +1,26 @@
+﻿@model WebApp.ViewModels.LoginViewModel
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+
+<form method="post" class="">
+    <fieldset>
+        <div>
+            <label for="userName" class="form-label mt-4">User Email</label>
+            <input type="email" class="form-control" id="userName" name="UserName" aria-describedby="userEmail" placeholder="Your company email address" />
+            <small id="userEmail" class="form-text text-muted">Your company email address</small>
+        </div>
+        <div>
+            <label for="password" class="form-label mt-4">Password</label>
+            <input type="password" class="form-control" id="password" name="Password" aria-describedby="userPassword" placeholder="Your login password" />
+            <small id="userPassword" class="form-text text-muted">Your login password</small>
+        </div>
+        <div class="form-check">
+            @Html.CheckBoxFor(p => p.RememberMe, new { @class = "form-check-input", id= "rememberMe" })
+            <label for="rememberMe" class="form-check-label">Remember Me</label>
+        </div>
+    </fieldset>
+    <input type="submit" class="btn btn-primary" value="Login"/>
+</form>

@@ -7,7 +7,7 @@ using System.Web.Http;
 
 namespace WebApp.ApiControllers
 {
-    [RoutePrefix("api/test")]
+    [RoutePrefix(BaseApiController.adminGroupRoute + "/test")]
     public class TestApiController : BaseApiController
     {
         // GET api/<controller>

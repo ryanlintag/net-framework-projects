@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "About";
+}
+<main aria-labelledby="title">
+    <div>
+        <table id="tblUsers" class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th data-column-id="Id" data-identifier="true" data-visible="false">Id</th>
+                    <th data-column-id="Email" data-sortable="true">Email</th>
+                    <th data-column-id="FirstName" data-sortable="true">First Name</th>
+                    <th data-column-id="LastName" data-sortable="true">Last Name</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</main>
+@section styles{
+    <link href="~/Content/jquery.bootgrid-1.3.1/jquery.bootgrid.min.css" rel="stylesheet" />    
+}
+@section scripts{
+    <script type="text/javascript">
+        var bootgridSettings = {
+            sorting: true,
+            multiSort: true,
+            rowCount: [25, 50, 100],
+            caseSensitive: false,
+            ajax: true,
+            ajaxSettings: {
+                method: "GET",
+                cache: false
+            },
+            searchSettings: {
+                delay: 500,
+                characters: 3
+            }
+        };
+        bootgridSettings.url = "/api/usersapi";
+
+
+        $('#tblUsers').bootgrid(bootgridSettings);
+    </script>
+
+}

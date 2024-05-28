@@ -2,18 +2,61 @@
     ViewBag.Title = "Contact";
 }
 <main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
-
-    <address>
-        One Microsoft Way<br />
-        Redmond, WA 98052-6399<br />
-        <abbr title="Phone">P:</abbr>
-        425.555.0100
-    </address>
-
-    <address>
-        <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-        <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-    </address>
+    <table id="datatableEx" class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
 </main>
+
+@section styles{
+    <link href="~/Content/datatables/datatables.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+}
+
+@section scripts{
+    <script src="~/Content/datatables/datatables.js"></script>
+    <script type="text/javascript">
+        var dt = (function () {
+            var initialize = function (tableId) {
+                new DataTable('#' + tableId,
+                    {
+                        ajax: {
+                            url: '/api/usersapi',
+                            type: 'GET',
+                            dataSrc: 'rows'
+                        },
+                        columns: [
+                            {
+                                data: 'Email'
+                            },
+                            {
+                                data: 'FirstName'
+                            },
+                            {
+                                data: 'LastName'
+                            },
+                            {
+                                data: 'Id',
+                                render: function (data) {
+                                    return '<a href="#" class="btn btn-sm btn-info"><i class="bi bi-pencil-square" data-id="' + data + '"/></a>'
+                                }
+                            }
+                        ]
+                    }
+                );
+            }
+
+            return {
+                Initialize: initialize
+            };
+        })();
+
+        dt.Initialize('datatableEx');
+    </script>
+}

@@ -7,29 +7,27 @@ using System.Threading.Tasks;
 
 namespace MediatorLibrary
 {
-    /// <summary>
-    /// Represents a mediator implementation that handles sending requests and returning responses.
-    /// </summary>
     public class Mediator : IMediator
     {
-        private readonly Dictionary<Type, Type> _handlerTypes;
+        private Dictionary<Type, Type> _handlerTypes { get; set; }
+        private IRequestHandlerFactory _handlerFactory { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Mediator"/> class.
-        /// </summary>
-        public Mediator()
+        public Mediator(IRequestHandlerFactory handlerFactory)
         {
             _handlerTypes = new Dictionary<Type, Type>();
+            _handlerFactory = handlerFactory;
             ScanRequestAssemblies();
         }
+        public void RegisterHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
+            where TRequest : IRequest<TResponse>
+            where TResponse : class
+        {
+            var requestType = typeof(TRequest);
+            var responseType = typeof(TResponse);
 
-        /// <summary>
-        /// Sends a request and returns the response.
-        /// </summary>
-        /// <typeparam name="TRequest">The type of the request.</typeparam>
-        /// <typeparam name="TResponse">The type of the response.</typeparam>
-        /// <param name="request">The request to send.</param>
-        /// <returns>A task representing the asynchronous operation that returns the response.</returns>
+            _handlerTypes[requestType] = handler.GetType();
+        }
+
         public async Task<Result<TResponse>> Send<TRequest, TResponse>(TRequest request)
             where TRequest : IRequest<TResponse>
             where TResponse : class
@@ -40,7 +38,15 @@ namespace MediatorLibrary
                 return new Result<TResponse>(new Error("Mediator.RequestMapping", $"No handler registered for request type: {requestType.Name}"));
             }
 
-            var handler = (IRequestHandler<TRequest, TResponse>)Activator.CreateInstance(handlerType);
+            IRequestHandler<TRequest, TResponse> handler;
+            try
+            {
+                handler = _handlerFactory.CreateHandler<TRequest, TResponse>(handlerType);
+            }
+            catch(Exception ex)
+            {
+                return new Result<TResponse>(new Error("Mediator.HandlerCreationException", ex.Message));
+            }
 
             try
             {
@@ -52,9 +58,6 @@ namespace MediatorLibrary
             }
         }
 
-        /// <summary>
-        /// Scans the assemblies to find request handlers and registers them.
-        /// </summary>
         private void ScanRequestAssemblies()
         {
             var executingAssembly = Assembly.GetExecutingAssembly();
@@ -73,10 +76,9 @@ namespace MediatorLibrary
                     var requestType = @interface.GetGenericArguments()[0];
                     var responseType = @interface.GetGenericArguments()[1];
 
-                    _handlerTypes[requestType] = handlerType;
+                    _handlerTypes[requestType] = @interface;
                 }
             }
         }
     }
-
 }
